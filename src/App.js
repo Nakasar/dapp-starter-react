@@ -3,6 +3,7 @@ import { createMuiTheme } from "@material-ui/core";
 import { BrowserRouter as Router } from "react-router-dom";
 
 import { Web3ContextProvider } from "./contexts/web3.context";
+import {TokenContextProvider} from "./contexts/token.context";
 import Layout from "./pages/Layout";
 
 const theme = createMuiTheme({});
@@ -12,9 +13,11 @@ function App() {
     <>
       <ThemeProvider theme={theme}>
         <Web3ContextProvider>
-          <Router>
-            <Layout />
-          </Router>
+          <TokenContextProvider>
+            <Router>
+              <Layout />
+            </Router>
+          </TokenContextProvider>
         </Web3ContextProvider>
       </ThemeProvider>
     </>

@@ -7,6 +7,7 @@ import { Link, NavLink, Route, Switch } from "react-router-dom";
 import Home from "./Home";
 import {useWeb3} from "../contexts/web3.context";
 import About from "./About";
+import Token from "./Token";
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -45,6 +46,7 @@ function Layout() {
             dApp
           </Typography>
           <Button color="inherit" component={NavLink} to="/" exact activeStyle={{ color: "darkblue", fontWeight: "bold" }}>Home</Button>
+          <Button color="inherit" component={NavLink} to="/token" activeStyle={{ color: "darkblue", fontWeight: "bold" }}>Token</Button>
           <Button color="inherit" component={NavLink} to="/about" activeStyle={{ color: "darkblue", fontWeight: "bold" }}>About</Button>
 
           {web3.loaded ? (
@@ -75,6 +77,9 @@ function Layout() {
         </Route>
         <Route path="/about">
           <About />
+        </Route>
+        <Route path="/token">
+          <Token />
         </Route>
         <Route>
           <h1>OUPS!</h1>
