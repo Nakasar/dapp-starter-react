@@ -26,6 +26,25 @@ class Token {
     return transfers;
   }
 
+  listenForTransfers(callback) {
+    this.contract.on('Transfer', (from, to, value, event) => {
+      console.log(event)
+      callback(event);
+    });
+  }
+
+  async pause(onConfirmation) {
+    const signer = this.contract.provider.getSigner();
+    const contractWithSigner = this.contract.connect(signer);
+    const transaction = await contractWithSigner.pause();
+
+    transaction.wait().then(() => {
+      onConfirmation();
+    });
+
+    return transaction;
+  }
+
   constructor({ tokenContract }) {
     this.contract = tokenContract;
     this.address = tokenContract.address;

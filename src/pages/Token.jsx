@@ -10,6 +10,7 @@ function Token() {
 
   const [tokenAddress, setTokenAddress] = useState('');
   const [tokenTransfersLoaded, setTokenTransfersLoaded] = useState(false);
+  const [tokenPausing, setTokenPausing] = useState(null);
 
   useEffect(() => {
     if (tokenContext.loaded) {
@@ -26,6 +27,15 @@ function Token() {
   async function fetchTokenTransfers() {
     await tokenContext.fetchTransfers();
     setTokenTransfersLoaded(true);
+  }
+
+  async function pauseToken() {
+    const pausingTransaction = await tokenContext.pauseToken(() => {
+      setTokenPausing(null);
+    });
+    setTokenPausing({
+      transactionHash: pausingTransaction.hash,
+    });
   }
 
   if (!tokenContext.loaded) {
@@ -45,6 +55,11 @@ function Token() {
   return (
     <Container>
       <p>Token at {tokenContext.token.address} (name: {tokenContext.token.name})</p>
+
+      {tokenPausing ? <div>
+        <Button variant="contained" color="primary" disabled>Pausing token...</Button>
+        hash: {tokenPausing.transactionHash}
+      </div>: <Button variant="contained" color="primary" onClick={pauseToken}>Pause token</Button>}
 
       {tokenTransfersLoaded ? <div>
         <table>

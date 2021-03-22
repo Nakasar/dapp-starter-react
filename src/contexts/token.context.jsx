@@ -8,15 +8,37 @@ const TokenContext = React.createContext({ loaded: false });
 function TokenContextProvider(props) {
   const [loaded, setLoaded] = React.useState(false);
   const [token, setToken] = React.useState(null);
-  const [transfers, setTransfers] = React.useState([]);
+  const [transfers, dispatchTransfers] = React.useReducer((state, action) => {
+    switch (action.action) {
+      case 'ADD':
+        return [...state, action.transfer];
+      case 'SET':
+        return action.transfers;
+    }
+  }, []);
 
   async function loadToken(tokenAddress, provider) {
-    setToken(await tokenAdapter.instantiateToken(tokenAddress, provider));
+    const token = await tokenAdapter.instantiateToken(tokenAddress, provider);
+    setToken(token);
     setLoaded(true);
+
+    token.listenForTransfers((transfer) => {
+      dispatchTransfers({
+        action: 'ADD',
+        transfer,
+      });
+    });
   }
 
   async function fetchTransfers() {
-    setTransfers(await token.getTransfers());
+    dispatchTransfers({
+      action: 'SET',
+      transfers: await token.getTransfers() ?? [],
+    });
+  }
+
+  async function pauseToken(onConfirmation) {
+    return token.pause(onConfirmation);
   }
 
   const value = {
@@ -25,6 +47,7 @@ function TokenContextProvider(props) {
     transfers,
     loadToken,
     fetchTransfers,
+    pauseToken,
   };
 
   return (
